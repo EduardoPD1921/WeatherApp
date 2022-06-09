@@ -1,26 +1,30 @@
 export const images = [
   {
-    label: 'Clear',
+    slug: 'Clear',
     image: require('../../assets/images/weather/Clear.png')
   },
   {
-    label: 'Thunderstorm',
+    slug: 'Clear-night',
+    image: require('../../assets/images/weather/Clear-night.png'),
+  },
+  {
+    slug: 'Thunderstorm',
     image: require('../../assets/images/weather/Thunderstorm.png')
   },
   {
-    label: 'Drizzle',
+    slug: 'Drizzle',
     image: require('../../assets/images/weather/Drizzle.png')
   },
   {
-    label: 'Rain',
+    slug: 'Rain',
     image: require('../../assets/images/weather/Rain.png')
   },
   {
-    label: 'Snow',
+    slug: 'Snow',
     image: require('../../assets/images/weather/Snow.png')
   },
   {
-    label: 'Clouds',
+    slug: 'Clouds',
     image: require('../../assets/images/weather/Clouds.png')
   }
 ]

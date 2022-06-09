@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { View, StyleSheet, SafeAreaView, TextInput, Image } from 'react-native'
+import { View, StyleSheet, SafeAreaView, TextInput, ActivityIndicator } from 'react-native'
 import Geolocation from '@react-native-community/geolocation'
 
 import useWeather from '../api/useWeather'
 import useLocation from '../api/useLocation'
 
 import BasicWeatherInfo from '../components/BasicWeatherInfo'
-
-import SearchIcon from '../../assets/images/searchIcon.png'
 
 import Icon from 'react-native-vector-icons/Ionicons'
 
@@ -45,6 +43,12 @@ const MainScreen = () => {
     if (weather && location) {
       return <BasicWeatherInfo city={location.city} weather={weather} />
     }
+
+    return (
+      <View style={styles.loadWrapper}>
+        <ActivityIndicator size='large' color='#C4C4C4' />
+      </View>
+    )
   }
 
   return (
@@ -87,6 +91,11 @@ const styles = StyleSheet.create({
     top: 14,
     right: 15,
     zIndex: 10
+  },
+  loadWrapper: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
   }
 })
 
