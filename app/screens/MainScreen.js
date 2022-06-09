@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { View, StyleSheet, SafeAreaView, TextInput, ActivityIndicator } from 'react-native'
-import Geolocation from '@react-native-community/geolocation'
+import { View, StyleSheet, SafeAreaView, TextInput, ActivityIndicator, PermissionsAndroid } from 'react-native'
+import Geolocation from 'react-native-geolocation-service'
 
 import useWeather from '../api/useWeather'
 import useLocation from '../api/useLocation'
@@ -17,26 +17,42 @@ const MainScreen = () => {
   const locationApi = useLocation()
 
   useEffect(() => {
-    Geolocation.getCurrentPosition(async info => {
-      const weatherInfo = await weatherApi.get('onecall', {
-        params: {
-          lat: info.coords.latitude,
-          lon: info.coords.longitude
+    const requestPermisionAndLocation = async () => {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        {
+          'title': 'Test',
+          'message': 'test'
         }
-      })
+      )
 
-      const locationInfo = await locationApi.get('reverse-geocode-client', {
-        params: {
-          latitude: info.coords.latitude,
-          longitude: info.coords.longitude
-        }
-      })
+      console.log(granted)
 
-      setWeather(weatherInfo.data)
-      setLocation(locationInfo.data)
+      if (granted == 'granted') {
+        Geolocation.getCurrentPosition(async position => {
+          console.log(position)
 
-      console.log(weatherInfo.data)
-    })
+          const weatherInfo = await weatherApi.get('onecall', {
+            params: {
+              lat: position.coords.latitude,
+              lon: position.coords.longitude
+            }
+          })
+    
+          const locationInfo = await locationApi.get('reverse-geocode-client', {
+            params: {
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude
+            }
+          })
+    
+          setWeather(weatherInfo.data)
+          setLocation(locationInfo.data)
+        })
+      }
+    }
+
+    requestPermisionAndLocation()
   }, [])
 
   const renderBasicWeatherInfo = () => {

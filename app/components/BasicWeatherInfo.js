@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, Image, StyleSheet } from 'react-native'
+import { View, Text, Image, StyleSheet, ActivityIndicator } from 'react-native'
 
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
 
@@ -13,24 +13,24 @@ const BasicWeatherInfo = props => {
     const onlyHour = time.split(':')[0]
 
     setCurrentHour(onlyHour)
-
-    console.log(onlyHour)
   }, [])
 
   const getWeatherImage = () => {
-    return images.map(image => {
-      console.log(currentHour)
-      if (currentHour >= 18) {
-        if (image.slug == props.weather.current.weather[0].main + '-night') {
-          return <Image style={styles.image} key={image.slug} source={image.image} />
+    if (currentHour) {
+      return images.map(image => {
+        if (currentHour >= 18 || (currentHour >= 0 && currentHour <= 4)) {
+          if (image.slug == props.weather.current.weather[0].main + '-night') {
+            return <Image style={styles.image} key={image.slug} source={image.image} />
+          }
+        } else {
+          if (image.slug == props.weather.current.weather[0].main) {
+            return <Image style={styles.image} key={image.slug} source={image.image} />
+          }
         }
-      } else {
-        console.log('wtf')
-        if (image.slug == props.weather.current.weather[0].main) {
-          return <Image style={styles.image} key={image.slug} source={image.image} />
-        }
-      }
-    })
+      })
+    }
+
+    return <ActivityIndicator size='large' color='#C4C4C4' />
   }
 
   const getCurrentTemp = () => {
@@ -64,8 +64,16 @@ const BasicWeatherInfo = props => {
       </View>
       <View style={styles.basicInformations}>
         <View style={styles.infoColumn}>
-          <Text style={styles.timeTitle}>HORÁRIO</Text>
-          <Text style={styles.time}>{getCurrentTime()}</Text>
+          <Text style={styles.infoTitle}>HORÁRIO</Text>
+          <Text style={styles.info}>{getCurrentTime()}</Text>
+        </View>
+        <View style={styles.infoColumn}>
+          <Text style={styles.infoTitle}>UV</Text>
+          <Text>{props.weather.current.uvi}</Text>
+        </View>
+        <View style={styles.infoColumn}>
+          <Text style={styles.infoTitle}>CHUVA</Text>
+          <Text>{props.weather.daily[0].pop + '%'}</Text>
         </View>
       </View>
     </View>
@@ -114,12 +122,12 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row'
   },
-  timeTitle: {
+  infoTitle: {
     fontFamily: 'Poppins-Medium',
     fontSize: 12,
     color: '#C4C4C4'
   },
-  time: {
+  info: {
     fontFamily: 'Poppins-Medium',
     fontSize: 15,
     color: '#9A9A9A'
