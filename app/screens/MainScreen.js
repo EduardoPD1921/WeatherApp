@@ -95,7 +95,7 @@ const MainScreen = () => {
       }
     },
     onEnd: (event) => {
-      if (event.y >= 90) {
+      if (verticalPosition.value >= 80) {
         verticalPosition.value = withSpring(100)
         runOnJS(setIsLoading)(true)
       } else {
