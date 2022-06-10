@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, Image, StyleSheet, ActivityIndicator } from 'react-native'
+import { View, Text, Image, StyleSheet, ActivityIndicator, Dimensions } from 'react-native'
 
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
 
@@ -42,13 +42,10 @@ const BasicWeatherInfo = props => {
     const timezoneOffset = props.weather.timezone_offset
     const currentTimeStamp = timeStamp + timezoneOffset
 
-    const formatObj = new Intl.DateTimeFormat('pt-BR', {
-      timeStyle: 'short',
-      timeZone: 'UTC'
-    })
-    const time = formatObj.format(new Date(currentTimeStamp * 1000))
+    const date = new Date(currentTimeStamp * 1000)
+    const formattedTime = `${date.getUTCHours()}:${date.getUTCMinutes()}`
 
-    return time
+    return formattedTime
   }
 
   return (
@@ -73,7 +70,7 @@ const BasicWeatherInfo = props => {
         </View>
         <View style={styles.infoColumn}>
           <Text style={styles.infoTitle}>CHUVA</Text>
-          <Text>{props.weather.daily[0].pop + '%'}</Text>
+          <Text>{props.weather.daily[0].pop * 100 + '%'}</Text>
         </View>
       </View>
     </View>
@@ -120,7 +117,10 @@ const styles = StyleSheet.create({
   },
   basicInformations: {
     display: 'flex',
-    flexDirection: 'row'
+    padding: 10,
+    flexDirection: 'row',
+    backgroundColor: '#FDFCFC',
+    borderRadius: 11
   },
   infoTitle: {
     fontFamily: 'Poppins-Medium',
@@ -135,7 +135,9 @@ const styles = StyleSheet.create({
   infoColumn: {
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'center'
+    alignItems: 'center',
+    marginLeft: 20,
+    marginRight: 20
   }
 })
 

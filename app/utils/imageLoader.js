@@ -26,5 +26,9 @@ export const images = [
   {
     slug: 'Clouds',
     image: require('../../assets/images/weather/Clouds.png')
+  },
+  {
+    slug: 'Clouds-night',
+    image: require('../../assets/images/weather/Clouds-night.png')
   }
 ]
