@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, Image, StyleSheet, ActivityIndicator, Dimensions } from 'react-native'
+import { View, Text, Image, StyleSheet, ActivityIndicator } from 'react-native'
 
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
 
@@ -42,10 +42,13 @@ const BasicWeatherInfo = props => {
     const timezoneOffset = props.weather.timezone_offset
     const currentTimeStamp = timeStamp + timezoneOffset
 
-    const date = new Date(currentTimeStamp * 1000)
-    const formattedTime = `${date.getUTCHours()}:${date.getUTCMinutes()}`
+    const current_date = new Date(currentTimeStamp * 1000)
+    const current_hours = current_date.getUTCHours() > 9 ?
+      current_date.getUTCHours() : `0${current_date.getUTCMinutes()}`
+    const current_minutes = current_date.getUTCMinutes() > 9 ?
+      current_date.getUTCMinutes() : `0${current_date.getUTCMinutes()}`
 
-    return formattedTime
+    return `${current_hours}:${current_minutes}`
   }
 
   return (

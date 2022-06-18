@@ -122,18 +122,20 @@ const MainScreen = () => {
 
   return (
     <>
-      {renderRefreshAnimation()}
-      <PanGestureHandler onGestureEvent={panGestureEvent}>
-        <Animated.View style={[styles.wrapper, refreshAnimation]}>
-          <SafeAreaView style={styles.mainContainer}>
-            <View>
-              <Icon size={20} name='search-sharp' style={styles.searchIcon} />
-              <TextInput placeholderTextColor='#C4C4C4' placeholder='Procure uma localização' style={styles.searchInput} />
-            </View>
-            {renderBasicWeatherInfo()}
-          </SafeAreaView>
-        </Animated.View>
-      </PanGestureHandler>
+      <View style={styles.backgroundContainer}>
+        {renderRefreshAnimation()}
+        <PanGestureHandler onGestureEvent={panGestureEvent}>
+          <Animated.View style={[styles.wrapper, refreshAnimation]}>
+            <SafeAreaView style={styles.mainContainer}>
+              <View>
+                <Icon size={20} name='search-sharp' style={styles.searchIcon} />
+                <TextInput placeholderTextColor='#C4C4C4' placeholder='Procure uma localização' style={styles.searchInput} />
+              </View>
+              {renderBasicWeatherInfo()}
+            </SafeAreaView>
+          </Animated.View>
+        </PanGestureHandler>
+      </View>
     </>
   )
 }
@@ -148,6 +150,10 @@ const styles = StyleSheet.create({
     flex: 1,
     margin: 40,
     zIndex: 0
+  },
+  backgroundContainer: {
+    flex: 1,
+    backgroundColor: '#fafafa'
   },
   searchInput: {
     paddingLeft: 20,
