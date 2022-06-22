@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, Image, StyleSheet, ActivityIndicator } from 'react-native'
+import { View, Text, Image, StyleSheet, ActivityIndicator, Button } from 'react-native'
+import { PanGestureHandler } from 'react-native-gesture-handler'
+import Animated, { useAnimatedGestureHandler, useSharedValue, useAnimatedStyle, interpolate, withTiming, runOnJS } from 'react-native-reanimated'
 
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
 
@@ -7,6 +9,11 @@ import { images } from '../utils/imageLoader'
 
 const BasicWeatherInfo = props => {
   const [currentHour, setCurrentHour] = useState()
+  const [showingInfo, setShowingInfo] = useState(1)
+
+  const firstInfo = useSharedValue(0)
+  const secondInfo = useSharedValue(400)
+  const thirdInfo = useSharedValue(400)
 
   useEffect(() => {
     const time = getCurrentTime()
@@ -14,6 +21,154 @@ const BasicWeatherInfo = props => {
 
     setCurrentHour(onlyHour)
   }, [])
+
+  const panGestureEvent = useAnimatedGestureHandler({
+    onStart: (event) => {},
+    onActive: (event) => {
+      if (event.velocityX < 0) {
+        if (showingInfo == 1) {
+          firstInfo.value = interpolate(event.translationX,
+            [0, -400],
+            [0, -400]
+          )
+
+          secondInfo.value = interpolate(event.translationX,
+            [0, -400],
+            [400, 0]
+          )
+        } else if (showingInfo == 2) {
+          secondInfo.value = interpolate(event.translationX,
+            [0, -400],
+            [0, -400]
+          )
+
+          thirdInfo.value = interpolate(event.translationX,
+            [0, -400],
+            [400, 0]
+          )
+        }
+      } else {
+        if (showingInfo == 2) {
+          secondInfo.value = interpolate(event.translationX,
+            [0, 400],
+            [0, 400]
+          )
+
+          firstInfo.value = interpolate(event.translationX,
+            [0, 400],
+            [-400, 0]
+          )
+        } else if (showingInfo == 3) {
+          thirdInfo.value = interpolate(event.translationX,
+            [0, 400],
+            [0, 400]
+          )
+
+          secondInfo.value = interpolate(event.translationX,
+            [0, 400],
+            [-400, 0]
+          )
+        }
+      }
+    },
+    onEnd: (event) => {
+      if (event.velocityX < 0) {
+        if (event.translationX <= -120 && showingInfo == 1) {
+          firstInfo.value = withTiming(-400, {
+            duration: 200
+          })
+      
+          secondInfo.value = withTiming(0, {
+            duration: 200
+          })
+  
+          runOnJS(setShowingInfo)(showingInfo + 1)
+        } else if (event.translationX > -120 && showingInfo == 1) {
+          firstInfo.value = withTiming(0, {
+            duration: 200
+          })
+
+          secondInfo.value = withTiming(400, {
+            duration: 200
+          })
+        } else if (event.translationX <= -120 && showingInfo == 2) {
+          secondInfo.value = withTiming(-400, {
+            duration: 200
+          })
+      
+          thirdInfo.value = withTiming(0, {
+            duration: 200
+          })
+  
+          runOnJS(setShowingInfo)(showingInfo + 1)
+        } else if (event.translationX > -120 && showingInfo == 2) {
+          secondInfo.value = withTiming(0, {
+            duration: 200
+          })
+
+          thirdInfo.value = withTiming(400, {
+            duration: 200
+          })
+        }
+      } else {
+        if (event.translationX >= 120 && showingInfo == 2) {
+          secondInfo.value = withTiming(400, {
+            duration: 200
+          })
+
+          firstInfo.value = withTiming(0, {
+            duration: 200
+          })
+
+          runOnJS(setShowingInfo)(showingInfo - 1)
+        } else if (event.translationX < 120 && showingInfo == 2) {
+          secondInfo.value = withTiming(0, {
+            duration: 200
+          })
+
+          firstInfo.value = withTiming(-400, {
+            duration: 200
+          })
+        } else if (event.translationX >= 120 && showingInfo == 3) {
+          thirdInfo.value = withTiming(400, {
+            duration: 200
+          })
+
+          secondInfo.value = withTiming(0, {
+            duration: 200
+          })
+
+          runOnJS(setShowingInfo)(showingInfo - 1)
+        } else if (event.translationX < 120 && showingInfo == 3) {
+          thirdInfo.value = withTiming(0, {
+            duration: 200
+          })
+
+          secondInfo.value = withTiming(-400, {
+            duration: 200
+          })
+        }
+      }
+    }
+  })
+
+  const firstWeatherInfoPosition = useAnimatedStyle(() => {
+    return {
+      transform: [{ translateX: firstInfo.value }]
+    }
+  })
+
+  const secondWeatherInfoPosition = useAnimatedStyle(() => {
+    return {
+      transform: [{ translateX: secondInfo.value }]
+    }
+  })
+
+  const thirdWeatherInfoPosition = useAnimatedStyle(() => {
+    return {
+      transform: [{ translateX: thirdInfo.value }]
+    }
+  })
 
   const getWeatherImage = () => {
     if (currentHour) {
@@ -52,38 +207,94 @@ const BasicWeatherInfo = props => {
   }
 
   return (
-    <View style={styles.mainContainer}>
-      {getWeatherImage()}
-      <View style={styles.cityInfoWrapper}>
-        <Text style={styles.cityName}>{props.city}</Text>
-        <FontAwesome size={25} style={styles.locationIcon} name='location-arrow' />
-      </View>
-      <View>
-        <Text style={styles.tempText}>{getCurrentTemp()}</Text>
-        <FontAwesome name='circle-o' size={10} style={styles.elipseIcon} />
-      </View>
-      <View style={styles.basicInformations}>
-        <View style={styles.infoColumn}>
-          <Text style={styles.infoTitle}>HORÁRIO</Text>
-          <Text style={styles.info}>{getCurrentTime()}</Text>
-        </View>
-        <View style={styles.infoColumn}>
-          <Text style={styles.infoTitle}>UV</Text>
-          <Text>{props.weather.current.uvi}</Text>
-        </View>
-        <View style={styles.infoColumn}>
-          <Text style={styles.infoTitle}>CHUVA</Text>
-          <Text>{props.weather.daily[0].pop * 100 + '%'}</Text>
-        </View>
-      </View>
-    </View>
+    <PanGestureHandler onGestureEvent={panGestureEvent}>
+      <Animated.View style={{ flex: 1, display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+        {/* <Button onPress={() => console.log(showingInfo)} title='test' /> */}
+        <Animated.View style={[styles.mainContainer, firstWeatherInfoPosition]}>
+          {getWeatherImage()}
+          <View style={styles.cityInfoWrapper}>
+            <Text style={styles.cityName}>{props.city} 1</Text>
+            <FontAwesome size={25} style={styles.locationIcon} name='location-arrow' />
+          </View>
+          <View>
+            <Text style={styles.tempText}>{getCurrentTemp()}</Text>
+            <FontAwesome name='circle-o' size={10} style={styles.elipseIcon} />
+          </View>
+          <View style={styles.basicInformations}>
+            <View style={styles.infoColumn}>
+              <Text style={styles.infoTitle}>HORÁRIO</Text>
+              <Text style={styles.info}>{getCurrentTime()}</Text>
+            </View>
+            <View style={styles.infoColumn}>
+              <Text style={styles.infoTitle}>UV</Text>
+              <Text>{props.weather.current.uvi}</Text>
+            </View>
+            <View style={styles.infoColumn}>
+              <Text style={styles.infoTitle}>CHUVA</Text>
+              <Text>{props.weather.daily[0].pop * 100 + '%'}</Text>
+            </View>
+          </View>
+        </Animated.View>
+        <Animated.View style={[styles.mainContainer, secondWeatherInfoPosition]}>
+          {getWeatherImage()}
+          <View style={styles.cityInfoWrapper}>
+            <Text style={styles.cityName}>{props.city} 2</Text>
+            <FontAwesome size={25} style={styles.locationIcon} name='location-arrow' />
+          </View>
+          <View>
+            <Text style={styles.tempText}>{getCurrentTemp()}</Text>
+            <FontAwesome name='circle-o' size={10} style={styles.elipseIcon} />
+          </View>
+          <View style={styles.basicInformations}>
+            <View style={styles.infoColumn}>
+              <Text style={styles.infoTitle}>HORÁRIO</Text>
+              <Text style={styles.info}>{getCurrentTime()}</Text>
+            </View>
+            <View style={styles.infoColumn}>
+              <Text style={styles.infoTitle}>UV</Text>
+              <Text>{props.weather.current.uvi}</Text>
+            </View>
+            <View style={styles.infoColumn}>
+              <Text style={styles.infoTitle}>CHUVA</Text>
+              <Text>{props.weather.daily[0].pop * 100 + '%'}</Text>
+            </View>
+          </View>
+        </Animated.View>
+        <Animated.View style={[styles.mainContainer, thirdWeatherInfoPosition]}>
+          {getWeatherImage()}
+          <View style={styles.cityInfoWrapper}>
+            <Text style={styles.cityName}>{props.city} 3</Text>
+            <FontAwesome size={25} style={styles.locationIcon} name='location-arrow' />
+          </View>
+          <View>
+            <Text style={styles.tempText}>{getCurrentTemp()}</Text>
+            <FontAwesome name='circle-o' size={10} style={styles.elipseIcon} />
+          </View>
+          <View style={styles.basicInformations}>
+            <View style={styles.infoColumn}>
+              <Text style={styles.infoTitle}>HORÁRIO</Text>
+              <Text style={styles.info}>{getCurrentTime()}</Text>
+            </View>
+            <View style={styles.infoColumn}>
+              <Text style={styles.infoTitle}>UV</Text>
+              <Text>{props.weather.current.uvi}</Text>
+            </View>
+            <View style={styles.infoColumn}>
+              <Text style={styles.infoTitle}>CHUVA</Text>
+              <Text>{props.weather.daily[0].pop * 100 + '%'}</Text>
+            </View>
+          </View>
+        </Animated.View>
+      </Animated.View>
+    </PanGestureHandler>
   )
 }
 
 const styles = StyleSheet.create({
   mainContainer: {
-    flex: 1,
-    alignItems: 'center'
+    alignItems: 'center',
+    alignS: 'center',
+    position: 'absolute'
   },
   image: {
     marginTop: 60,

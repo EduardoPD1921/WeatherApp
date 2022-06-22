@@ -149,7 +149,8 @@ const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
     margin: 40,
-    zIndex: 0
+    zIndex: 0,
+    justifyContent: 'center',
   },
   backgroundContainer: {
     flex: 1,
