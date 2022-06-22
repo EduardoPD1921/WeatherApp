@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, Image, StyleSheet, ActivityIndicator } from 'react-native'
+import { View, Text, Image, StyleSheet, ActivityIndicator, Dimensions } from 'react-native'
 import { PanGestureHandler } from 'react-native-gesture-handler'
 import Animated from 'react-native-reanimated'
 import useSwipeAnimation from '../hooks/useSwipeAnimation'
@@ -7,6 +7,16 @@ import useSwipeAnimation from '../hooks/useSwipeAnimation'
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
 
 import { images } from '../utils/imageLoader'
+import Sunrise from '../../assets/images/weather/Sunrise.png'
+import Day from '../../assets/images/weather/Clear.png'
+import Sunset from '../../assets/images/weather/Sunset.png'
+import Night from '../../assets/images/weather/Clear-night.png'
+
+// TODO:
+// - Display min and max temp for next days
+// - Apply scrollview on every display info
+// - Maybe use icons for every weather info 
+
 
 const BasicWeatherInfo = props => {
   const [currentHour, setCurrentHour] = useState()
@@ -42,10 +52,6 @@ const BasicWeatherInfo = props => {
     }
 
     return <ActivityIndicator size='large' color='#C4C4C4' />
-  }
-
-  const getCurrentTemp = () => {
-    return props.weather.current.temp.toFixed(0)
   }
 
   const getCurrentTime = () => {
@@ -97,11 +103,11 @@ const BasicWeatherInfo = props => {
         <Animated.View style={[styles.mainContainer, firstWeatherInfoPosition]}>
           {getWeatherImage()}
           <View style={styles.cityInfoWrapper}>
-            <Text style={styles.cityName}>{props.city} 1</Text>
+            <Text style={styles.cityName}>{props.city}</Text>
             <FontAwesome size={25} style={styles.locationIcon} name='location-arrow' />
           </View>
           <View>
-            <Text style={styles.tempText}>{getCurrentTemp()}</Text>
+            <Text style={styles.tempText}>{props.weather.current.temp.toFixed(0)}</Text>
             <FontAwesome name='circle-o' size={10} style={styles.elipseIcon} />
           </View>
           <View style={styles.basicInformations}>
@@ -120,38 +126,40 @@ const BasicWeatherInfo = props => {
           </View>
         </Animated.View>
         <Animated.View style={[styles.mainContainer, secondWeatherInfoPosition]}>
-          {getWeatherImage()}
-          <View style={styles.cityInfoWrapper}>
-            <Text style={styles.cityName}>{props.city} 2</Text>
-            <FontAwesome size={25} style={styles.locationIcon} name='location-arrow' />
-          </View>
-          <View>
-            <Text style={styles.tempText}>{getCurrentTemp()}</Text>
-            <FontAwesome name='circle-o' size={10} style={styles.elipseIcon} />
-          </View>
-          <View style={styles.basicInformations}>
-            <View style={styles.infoColumn}>
-              <Text style={styles.infoTitle}>HORÁRIO</Text>
-              <Text style={styles.info}>{getCurrentTime()}</Text>
+          <View style={styles.nextDayInfoContainer}>
+            <Text style={styles.boldText}>Amanhã</Text>
+            <View>
+              <Text style={styles.tempText}>20</Text>
+              <FontAwesome name='circle-o' size={10} style={styles.elipseIcon} />
             </View>
-            <View style={styles.infoColumn}>
-              <Text style={styles.infoTitle}>UV</Text>
-              <Text>{props.weather.current.uvi}</Text>
-            </View>
-            <View style={styles.infoColumn}>
-              <Text style={styles.infoTitle}>CHUVA</Text>
-              <Text>{props.weather.daily[0].pop * 100 + '%'}</Text>
+            <View style={styles.temps}>
+              <View style={{ alignItems: 'center' }}>
+                <Image style={styles.timeImageIndicator} source={Sunrise} />
+                <Text style={styles.info}>{props.weather.daily[1].temp.morn.toFixed(0) + 'º'}</Text>
+              </View>
+              <View style={{ alignItems: 'center' }}>
+                <Image style={styles.timeImageIndicator} source={Day} />
+                <Text style={styles.info}>{props.weather.daily[1].temp.day.toFixed(0) + 'º'}</Text>
+              </View>
+              <View style={{ alignItems: 'center' }}>
+                <Image style={styles.timeImageIndicator} source={Sunset} />
+                <Text style={styles.info}>{props.weather.daily[1].temp.eve.toFixed(0) + 'º'}</Text>
+              </View>
+              <View style={{ alignItems: 'center' }}>
+                <Image style={styles.timeImageIndicator} source={Night} />
+                <Text style={styles.info}>{props.weather.daily[1].temp.night.toFixed(0) + 'º'}</Text>
+              </View>
             </View>
           </View>
         </Animated.View>
         <Animated.View style={[styles.mainContainer, thirdWeatherInfoPosition]}>
           {getWeatherImage()}
           <View style={styles.cityInfoWrapper}>
-            <Text style={styles.cityName}>{props.city} 3</Text>
+            <Text style={styles.cityName}>{props.city}</Text>
             <FontAwesome size={25} style={styles.locationIcon} name='location-arrow' />
           </View>
           <View>
-            <Text style={styles.tempText}>{getCurrentTemp()}</Text>
+            {/* <Text style={styles.tempText}>{getCurrentTemp()}</Text> */}
             <FontAwesome name='circle-o' size={10} style={styles.elipseIcon} />
           </View>
           <View style={styles.basicInformations}>
@@ -177,7 +185,7 @@ const BasicWeatherInfo = props => {
 const styles = StyleSheet.create({
   mainContainer: {
     alignItems: 'center',
-    position: 'absolute'
+    position: 'absolute',
   },
   image: {
     marginTop: 60,
@@ -240,6 +248,28 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'center',
+  },
+  nextDayInfoContainer: {
+    marginTop: 60,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  temps: {
+    marginTop: 30,
+    display: 'flex',
+    flexDirection: 'row',
+    backgroundColor: '#FDFCFC',
+    borderRadius: 11
+  },
+  timeImageIndicator: {
+    margin: 5,
+    height: 60,
+    width: 60
+  },
+  boldText: {
+    fontFamily: 'Poppins-Medium',
+    color: 'black',
+    fontSize: 25
   }
 })
 
