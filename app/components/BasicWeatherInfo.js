@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, Image, StyleSheet, ActivityIndicator, Button } from 'react-native'
+import { View, Text, Image, StyleSheet, ActivityIndicator } from 'react-native'
 import { PanGestureHandler } from 'react-native-gesture-handler'
-import Animated, { useAnimatedGestureHandler, useSharedValue, useAnimatedStyle, interpolate, withTiming, runOnJS } from 'react-native-reanimated'
+import Animated from 'react-native-reanimated'
 import useSwipeAnimation from '../hooks/useSwipeAnimation'
 
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
@@ -22,7 +22,8 @@ const BasicWeatherInfo = props => {
     panGestureEvent,
     firstWeatherInfoPosition,
     secondWeatherInfoPosition,
-    thirdWeatherInfoPosition
+    thirdWeatherInfoPosition,
+    showingInfo
   } = useSwipeAnimation()
 
   const getWeatherImage = () => {
@@ -61,9 +62,38 @@ const BasicWeatherInfo = props => {
     return `${current_hours}:${current_minutes}`
   }
 
+  const getFirstDot = () => {
+    if (showingInfo == 1) {
+      return <FontAwesome style={{ margin: 5, marginTop: 15 }} name='circle' size={10} color='#757575' />
+    }
+
+    return <FontAwesome style={{ margin: 5, marginTop: 15 }} name='circle-o' size={10} color='#757575' />
+  }
+
+  const getSecondDot = () => {
+    if (showingInfo == 2) {
+      return <FontAwesome style={{ margin: 5, marginTop: 15 }} name='circle' size={10} color='#757575' />
+    }
+
+    return <FontAwesome style={{ margin: 5, marginTop: 15 }} name='circle-o' size={10} color='#757575' />
+  }
+
+  const getThirdDot = () => {
+    if (showingInfo == 3) {
+      return <FontAwesome style={{ margin: 5, marginTop: 15 }} name='circle' size={10} color='#757575' />
+    }
+
+    return <FontAwesome style={{ margin: 5, marginTop: 15 }} name='circle-o' size={10} color='#757575' />
+  }
+
   return (
     <PanGestureHandler onGestureEvent={panGestureEvent}>
       <Animated.View style={{ flex: 1, display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+        <View style={styles.dotLocation}>
+          {getFirstDot()}
+          {getSecondDot()}
+          {getThirdDot()}
+        </View>
         <Animated.View style={[styles.mainContainer, firstWeatherInfoPosition]}>
           {getWeatherImage()}
           <View style={styles.cityInfoWrapper}>
@@ -147,7 +177,6 @@ const BasicWeatherInfo = props => {
 const styles = StyleSheet.create({
   mainContainer: {
     alignItems: 'center',
-    alignS: 'center',
     position: 'absolute'
   },
   image: {
@@ -206,6 +235,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginLeft: 20,
     marginRight: 20
+  },
+  dotLocation: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
   }
 })
 

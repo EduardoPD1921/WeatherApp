@@ -220,7 +220,8 @@ function useSwipeAnimation() {
     panGestureEvent,
     firstWeatherInfoPosition,
     secondWeatherInfoPosition,
-    thirdWeatherInfoPosition
+    thirdWeatherInfoPosition,
+    showingInfo
   }
 }
 
