@@ -25,7 +25,19 @@ const BasicWeatherInfo = props => {
   const panGestureEvent = useAnimatedGestureHandler({
     onStart: (event) => {},
     onActive: (event) => {
-      if (event.velocityX < 0) {
+      if (event.velocityX <= 0) {
+        if (showingInfo == 3) {
+          thirdInfo.value = interpolate(event.translationX,
+            [0, -400],
+            [0, -400]
+          )
+
+          secondInfo.value = interpolate(event.translationX,
+            [400, 0],
+            [0, -400]
+          )
+        }
+
         if (showingInfo == 1) {
           firstInfo.value = interpolate(event.translationX,
             [0, -400],
@@ -42,16 +54,36 @@ const BasicWeatherInfo = props => {
             [0, -400]
           )
 
+          firstInfo.value = interpolate(event.translationX,
+            [400, 0],
+            [0, -400]
+          )
+
           thirdInfo.value = interpolate(event.translationX,
             [0, -400],
             [400, 0]
           )
         }
       } else {
-        if (showingInfo == 2) {
+        if (showingInfo == 1) {
+          firstInfo.value = interpolate(event.translationX,
+            [0, 400],
+            [0, 400]
+          )
+
+          secondInfo.value = interpolate(event.translationX,
+            [-400, 0],
+            [0, 400]
+          )
+        } else if (showingInfo == 2) {
           secondInfo.value = interpolate(event.translationX,
             [0, 400],
             [0, 400]
+          )
+
+          thirdInfo.value = interpolate(event.translationX,
+            [0, -400],
+            [400, 0]
           )
 
           firstInfo.value = interpolate(event.translationX,
@@ -73,6 +105,16 @@ const BasicWeatherInfo = props => {
     },
     onEnd: (event) => {
       if (event.velocityX < 0) {
+        if (showingInfo == 3) {
+          thirdInfo.value = withTiming(0, {
+            duration: 200
+          })
+
+          secondInfo.value = withTiming(-400, {
+            duration: 200
+          })
+        }
+
         if (event.translationX <= -120 && showingInfo == 1) {
           firstInfo.value = withTiming(-400, {
             duration: 200
@@ -83,7 +125,7 @@ const BasicWeatherInfo = props => {
           })
   
           runOnJS(setShowingInfo)(showingInfo + 1)
-        } else if (event.translationX > -120 && showingInfo == 1) {
+        } else if (event.translationX > -120.0 && showingInfo == 1) {
           firstInfo.value = withTiming(0, {
             duration: 200
           })
@@ -102,6 +144,10 @@ const BasicWeatherInfo = props => {
   
           runOnJS(setShowingInfo)(showingInfo + 1)
         } else if (event.translationX > -120 && showingInfo == 2) {
+          firstInfo.value = withTiming(-400, {
+            duration: 200
+          })
+
           secondInfo.value = withTiming(0, {
             duration: 200
           })
@@ -111,6 +157,16 @@ const BasicWeatherInfo = props => {
           })
         }
       } else {
+        if (showingInfo == 1) {
+          firstInfo.value = withTiming(0, {
+            duration: 200
+          })
+
+          secondInfo.value = withTiming(400, {
+            duration: 200
+          })
+        }
+
         if (event.translationX >= 120 && showingInfo == 2) {
           secondInfo.value = withTiming(400, {
             duration: 200
@@ -122,6 +178,10 @@ const BasicWeatherInfo = props => {
 
           runOnJS(setShowingInfo)(showingInfo - 1)
         } else if (event.translationX < 120 && showingInfo == 2) {
+          thirdInfo.value = withTiming(400, {
+            duration: 200
+          })
+
           secondInfo.value = withTiming(0, {
             duration: 200
           })
@@ -209,7 +269,6 @@ const BasicWeatherInfo = props => {
   return (
     <PanGestureHandler onGestureEvent={panGestureEvent}>
       <Animated.View style={{ flex: 1, display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
-        {/* <Button onPress={() => console.log(showingInfo)} title='test' /> */}
         <Animated.View style={[styles.mainContainer, firstWeatherInfoPosition]}>
           {getWeatherImage()}
           <View style={styles.cityInfoWrapper}>
@@ -227,11 +286,11 @@ const BasicWeatherInfo = props => {
             </View>
             <View style={styles.infoColumn}>
               <Text style={styles.infoTitle}>UV</Text>
-              <Text>{props.weather.current.uvi}</Text>
+              <Text style={styles.info}>{props.weather.current.uvi}</Text>
             </View>
             <View style={styles.infoColumn}>
               <Text style={styles.infoTitle}>CHUVA</Text>
-              <Text>{props.weather.daily[0].pop * 100 + '%'}</Text>
+              <Text style={styles.info}>{props.weather.daily[0].pop * 100 + '%'}</Text>
             </View>
           </View>
         </Animated.View>
