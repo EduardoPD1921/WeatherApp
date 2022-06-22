@@ -44,7 +44,7 @@ const BasicWeatherInfo = props => {
 
     const current_date = new Date(currentTimeStamp * 1000)
     const current_hours = current_date.getUTCHours() > 9 ?
-      current_date.getUTCHours() : `0${current_date.getUTCMinutes()}`
+      current_date.getUTCHours() : `0${current_date.getUTCHours()}`
     const current_minutes = current_date.getUTCMinutes() > 9 ?
       current_date.getUTCMinutes() : `0${current_date.getUTCMinutes()}`
 

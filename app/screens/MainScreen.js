@@ -124,7 +124,7 @@ const MainScreen = () => {
     <>
       <View style={styles.backgroundContainer}>
         {renderRefreshAnimation()}
-        <PanGestureHandler onGestureEvent={panGestureEvent}>
+        <PanGestureHandler activeOffsetY={10} onGestureEvent={panGestureEvent}>
           <Animated.View style={[styles.wrapper, refreshAnimation]}>
             <SafeAreaView style={styles.mainContainer}>
               <View>
