@@ -13,7 +13,6 @@ import Sunset from '../../assets/images/weather/Sunset.png'
 import Night from '../../assets/images/weather/Clear-night.png'
 
 // TODO:
-// - Display min and max temp for next days
 // - Apply scrollview on every display info
 // - Maybe use icons for every weather info 
 
@@ -127,10 +126,19 @@ const BasicWeatherInfo = props => {
         </Animated.View>
         <Animated.View style={[styles.mainContainer, secondWeatherInfoPosition]}>
           <View style={styles.nextDayInfoContainer}>
-            <Text style={styles.boldText}>Amanhã</Text>
-            <View>
-              <Text style={styles.tempText}>20</Text>
-              <FontAwesome name='circle-o' size={10} style={styles.elipseIcon} />
+            <View style={styles.headerInfo}>
+              <Text style={styles.boldText}>Amanhã</Text>
+              <View>
+                <FontAwesome style={styles.comparisonIcon} name='long-arrow-up' color='#FF8484' size={20} />
+                <Text style={styles.tempComparison}>{props.weather.daily[1].temp.max.toFixed(0)}</Text>
+                <FontAwesome name='circle-o' size={10} style={styles.elipseIcon} />
+              </View>
+              <View style={styles.divider} />
+              <View>
+                <FontAwesome style={styles.comparisonIcon} name='long-arrow-down' color='#848AFF' size={20} />
+                <Text style={styles.tempComparison}>{props.weather.daily[1].temp.min.toFixed(0)}</Text>
+                <FontAwesome name='circle-o' size={10} style={styles.elipseIcon} />
+              </View>
             </View>
             <View style={styles.temps}>
               <View style={{ alignItems: 'center' }}>
@@ -255,11 +263,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   temps: {
-    marginTop: 30,
     display: 'flex',
     flexDirection: 'row',
     backgroundColor: '#FDFCFC',
-    borderRadius: 11
+    borderRadius: 11,
+    marginTop: 15
   },
   timeImageIndicator: {
     margin: 5,
@@ -270,7 +278,29 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Medium',
     color: 'black',
     fontSize: 25
-  }
+  },
+  divider: {
+    borderTopWidth: 0.2,
+    width: 80,
+    color: '#757575'
+  },
+  tempComparison: {
+    fontSize: 30,
+    fontFamily: 'Poppins-Medium',
+    color: 'black'
+  },
+  comparisonIcon: {
+    position: 'absolute',
+    left: -15,
+    bottom: 20
+  },
+  headerInfo: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#FDFCFC',
+    borderRadius: 11,
+    padding: 20
+  },
 })
 
 export default BasicWeatherInfo
